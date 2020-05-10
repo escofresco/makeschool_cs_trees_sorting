@@ -62,46 +62,30 @@ def partition(items, low, high):
     `[low...p-1]`, and items greater than pivot into range `[p+1...high]`.
     Running time: O(high-low) Every element from low to high must be viewed.
     Memory usage: O(1) Elements are moved across pivot in-place."""
-    print(f'Before:      {items[low:high+1]}')
     # 4 5 5 2 95 20
     # ^   ^ ^
     #
     #
     # low = 0
     # high = 5
-
+    ## Designate items[low] as pivot
     i = low+1
     j = high
 
     while True:
-        ## Continue indefinitely while elements are on the wrong side of pivot
-        while items[i] < items[low]:
-            ## Move i right until it hits a value that should be on the right
-            if i == high:
-                break
+
+        while i < high+1 and items[i] <= items[low]:
             i += 1
 
-        while items[j] > items[low]:
-            ## Move j left until it hits a values that should be on the left
-            if j == low+1:
-                break
+        while j > low and items[j] > items[low]:
             j -= 1
 
-        if i >= j:
-            break # Both sides are correctly ordered
-
-        # i and j point to elements that should be swapped
+        if j < i:
+            break
+        print(items, i, j)
         items[i], items[j] = items[j], items[i]
-
-
-    print(f'After:       {items[low:high+1]}')
-    print(f'Items at i  {items[i]}')
-    #fix_high = int(i == high)
-    swap_index = i if i == high else i - 1
-    items[low], items[swap_index] = items[swap_index], items[low] # Put pivot in correct position
-    print(f'After swap:  {items[low:high+1]}')
-    return swap_index # Index of pivot
-
+    items[low], items[j] = items[j], items[low]
+    return j
 
 
 def quick_sort(items, low=None, high=None):
@@ -114,8 +98,8 @@ def quick_sort(items, low=None, high=None):
     Memory usage:               O(1) Shuffling is done in-place. """
 
     if None in (low, high):
-        items[:] = list(set(items))
-        shuffle(items) # Make sure that pivots are placed randomly
+        #items[:] = list(set(items))
+        #shuffle(items) # Make sure that pivots are placed randomly
         low = 0
         high = len(items) - 1
 

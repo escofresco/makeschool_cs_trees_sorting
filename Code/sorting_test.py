@@ -1,10 +1,12 @@
 #!python
 
 from sorting import random_ints
-from sorting_iterative import is_sorted, bubble_sort, selection_sort, insertion_sort
+from sorting_iterative import (is_sorted, bubble_sort, selection_sort,
+                               insertion_sort, bottom_up_merge_sort)
 from sorting_recursive import split_sort_merge, merge_sort, quick_sort
 from sorting_integer import counting_sort, bucket_sort
 import unittest
+from random import randint
 
 
 class IsSortedTest(unittest.TestCase):
@@ -16,18 +18,21 @@ class IsSortedTest(unittest.TestCase):
         assert is_sorted([3, 3]) is True  # Duplicate items are in order
         assert is_sorted([3, 5]) is True
         assert is_sorted([3, 5, 7]) is True
-        # TODO: Write more positive test cases with assert is True statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+        assert is_sorted(list(range(10000))) is True
+        assert is_sorted([5]*1000) is True
+        assert is_sorted([1]*100 + [2]*100 + [3]*100) is True
+        assert is_sorted(sorted([randint(0,1000) for _ in range(1000)])) is True
+
 
     def test_is_sorted_on_unsorted_integers(self):
         # Negative test cases (counterexamples) with lists of unsorted integers
         assert is_sorted([5, 3]) is False
         assert is_sorted([3, 5, 3]) is False
         assert is_sorted([7, 5, 3]) is False
-        # TODO: Write more negative test cases with assert is False statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+        assert is_sorted(list(reversed(range(10000)))) is False
+
+        # assert is False with high probability
+        assert is_sorted([randint(0,10) for _ in range(100000)]) is False
 
     def test_is_sorted_on_sorted_strings(self):
         # Positive test cases (examples) with lists of sorted strings
@@ -35,18 +40,18 @@ class IsSortedTest(unittest.TestCase):
         assert is_sorted(['A', 'A']) is True  # Duplicate items are in order
         assert is_sorted(['A', 'B']) is True
         assert is_sorted(['A', 'B', 'C']) is True
-        # TODO: Write more positive test cases with assert is True statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+        # Test monotonic
+        assert is_sorted(sorted([chr(randint(ord('A'), ord('z')))
+                                 for _ in range(1000)])) is True
 
     def test_is_sorted_on_unsorted_strings(self):
         # Negative test cases (counterexamples) with lists of unsorted strings
         assert is_sorted(['B', 'A']) is False
         assert is_sorted(['A', 'B', 'A']) is False
         assert is_sorted(['C', 'B', 'A']) is False
-        # TODO: Write more negative test cases with assert is False statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+        # Test monotonic
+        assert is_sorted(list(reversed(sorted([chr(randint(ord('A'), ord('z')))
+                                 for _ in range(1000)])))) is False
 
     def test_is_sorted_on_sorted_tuples(self):
         # Positive test cases (examples) with lists of sorted tuples
@@ -64,8 +69,10 @@ class IsSortedTest(unittest.TestCase):
         assert is_sorted([(3, 'A'), (5, 'B')]) is True  # Both items sorted
         assert is_sorted([(3, 'A'), (5, 'A')]) is True  # First item sorted
         assert is_sorted([(3, 'A'), (3, 'B')]) is True  # Second item sorted
-        # TODO: Write more positive test cases with assert is True statements
-        # ...
+        assert is_sorted(sorted([(randint(0,10), chr(randint(ord('A'), ord('z'))))
+                          for _ in range(10000)])) is True
+        assert is_sorted(sorted([(chr(randint(ord('A'), ord('z'))), randint(0,100))
+                          for _ in range(10000)])) is True
 
     def test_is_sorted_on_unsorted_tuples(self):
         # Negative test cases (counterexamples) with lists of unsorted tuples
@@ -75,8 +82,12 @@ class IsSortedTest(unittest.TestCase):
         assert is_sorted([('B', 5), ('A', 3)]) is False  # Both items unsorted
         assert is_sorted([('B', 3), ('A', 5)]) is False  # First item unsorted
         assert is_sorted([('A', 5), ('A', 3)]) is False  # Second item unsorted
-        # TODO: Write more negative test cases with assert is False statements
-        # ...
+
+        ## Test false with high probability
+        assert is_sorted([(randint(0,10), chr(randint(ord('A'), ord('z'))))
+                          for _ in range(10000)]) is False
+        assert is_sorted([(chr(randint(ord('A'), ord('z'))), randint(0,100))
+                          for _ in range(10000)]) is False
 
 
 class IntegerSortTest(unittest.TestCase):
@@ -96,9 +107,10 @@ class IntegerSortTest(unittest.TestCase):
         items3 = [5, 7, 3]
         sort(items3)
         assert items3 == [3, 5, 7]
-        # TODO: Write more test cases with assert equal list statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+
+        items4 = [5,5,4,4,3,3,2,2,-1]
+        sort(items4)
+        assert items4 == [-1, 2, 2, 3, 3, 4, 4, 5, 5]
 
     def test_sort_on_small_lists_of_integers_with_duplicates(self):
         items1 = [3, 3]
@@ -113,10 +125,7 @@ class IntegerSortTest(unittest.TestCase):
         items4 = [7, 5, 3, 7, 5, 7, 5, 3, 7]
         sort(items4)
         assert items4 == [3, 3, 5, 5, 5, 7, 7, 7, 7]
-        # TODO: Create lists of integers with many duplicate values
-        # TODO: Write more test cases with assert equal list statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+
 
     def test_sort_on_lists_of_random_integers(self):
         # Generate list of 10 random integers from range [1...20]
@@ -137,6 +146,11 @@ class IntegerSortTest(unittest.TestCase):
         sort(items3)  # Mutate
         assert items3 == sorted_items3
 
+        # Check descending monotonic
+        items6 = list(reversed(range(10000)))
+        sort(items6)
+        assert items6 == list(range(10000))
+
     def test_sort_on_lists_of_random_integers_with_duplicates(self):
         # Generate list of 20 random integers from range [1...10]
         items1 = random_ints(20, 1, 10)
@@ -156,6 +170,10 @@ class IntegerSortTest(unittest.TestCase):
         sort(items3)  # Mutate
         assert items3 == sorted_items3
 
+        items5 = [1000000]*10
+        sort(items5)
+        assert items5 == [1000000]*10
+
 
 class StringSortTest(unittest.TestCase):
 
@@ -169,9 +187,9 @@ class StringSortTest(unittest.TestCase):
         items3 = ['B', 'C', 'A']
         sort(items3)
         assert items3 == ['A', 'B', 'C']
-        # TODO: Write more test cases with assert equal list statements
-        # You'll need a lot more than this to test sorting algorithm robustness
-        # ...
+        items4 = [chr(randint(ord('A'), ord('z'))) for _ in range(10000)]
+        sort(items4)
+        assert items4 == sorted(items4)
 
     def test_sort_on_fish_book_title(self):
         items = 'one fish two fish red fish blue fish'.split()
@@ -215,7 +233,7 @@ def get_sort_function():
 
 
 # If using PyTest, change this variable to the sort function you want to test
-sort = bubble_sort
+sort = quick_sort
 
 
 if __name__ == '__main__':

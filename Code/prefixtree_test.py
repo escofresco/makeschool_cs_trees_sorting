@@ -14,21 +14,23 @@ class PrefixTreeTest(unittest.TestCase):
         # Verify root node
         assert isinstance(tree.root, PrefixTreeNode)
         assert tree.root.character == PrefixTree.START_CHARACTER
-        assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 0
+        assert tree.root.is_terminal() is True
+        assert tree.root.num_children() == 1
+        assert tree.root.children[0].character == '$'
 
     def test_init_with_string(self):
         tree = PrefixTree(['A'])
         # Verify root node
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 1
+        assert tree.root.num_children() == 2
         assert tree.root.has_child('A') is True
         # Verify node 'A'
         node_A = tree.root.get_child('A')
         assert node_A.character == 'A'
         assert node_A.is_terminal() is True
-        assert node_A.num_children() == 0
+        assert node_A.num_children() == 1
+        assert node_A.children[0].character == '$'
 
     def test_insert_with_string(self):
         tree = PrefixTree()
@@ -36,7 +38,7 @@ class PrefixTreeTest(unittest.TestCase):
         # Verify root node
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 1
+        assert tree.root.num_children() == 2
         assert tree.root.has_child('A') is True
         # Verify node 'A'
         node_A = tree.root.get_child('A')
@@ -48,7 +50,8 @@ class PrefixTreeTest(unittest.TestCase):
         node_B = node_A.get_child('B')
         assert node_B.character == 'B'
         assert node_B.is_terminal() is True
-        assert node_B.num_children() == 0
+        assert node_B.num_children() == 1
+        assert node_B.children[0].character == '$'
 
     def test_insert_with_4_strings(self):
         tree = PrefixTree()
@@ -57,7 +60,7 @@ class PrefixTreeTest(unittest.TestCase):
         # Verify root node
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 1
+        assert tree.root.num_children() == 2
         assert tree.root.has_child('A') is True
         # Verify new node 'A'
         node_A = tree.root.get_child('A')
@@ -75,14 +78,18 @@ class PrefixTreeTest(unittest.TestCase):
         node_C = node_B.get_child('C')
         assert node_C.character == 'C'
         assert node_C.is_terminal() is True
-        assert node_C.num_children() == 0
+        assert node_C.num_children() == 1
+        # Verify terminal node
+        node_dollar_sign = node_C.get_child('$')
+        assert node_dollar_sign.character == '$'
+        assert node_dollar_sign.num_children() == 0
 
         # Insert string with partial overlap so node 'B' has new child node 'D'
         tree.insert('ABD')
         # Verify root node again
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 1
+        assert tree.root.num_children() == 2
         assert tree.root.has_child('A') is True
         # Verify node 'A' again
         assert node_A.character == 'A'
@@ -99,19 +106,20 @@ class PrefixTreeTest(unittest.TestCase):
         node_D = node_B.get_child('D')
         assert node_D.character == 'D'
         assert node_D.is_terminal() is True
-        assert node_D.num_children() == 0
+        assert node_D.num_children() == 1
+        assert node_D.children[0].character == '$'
 
         # Insert substring already in tree so node 'A' becomes terminal
         tree.insert('A')
         # Verify root node again
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 1
+        assert tree.root.num_children() == 2
         assert tree.root.has_child('A') is True
         # Verify node 'A' again
         assert node_A.character == 'A'
-        assert node_A.is_terminal() is True  # Node 'A' is now terminal
-        assert node_A.num_children() == 1  # Node 'A' still has one child
+        #assert node_A.is_terminal() is True  # Node 'A' is now terminal
+        assert node_A.num_children() == 2  # Node 'A' still has one child
         assert node_A.has_child('B') is True  # Node 'B' is still its child
 
         # Insert new string with no overlap that starts from root node
@@ -119,7 +127,7 @@ class PrefixTreeTest(unittest.TestCase):
         # Verify root node again
         assert tree.root.character == PrefixTree.START_CHARACTER
         assert tree.root.is_terminal() is False
-        assert tree.root.num_children() == 2  # Root node now has two children
+        assert tree.root.num_children() == 3  # Root node now has two children
         assert tree.root.has_child('A') is True  # Node 'A' is still its child
         assert tree.root.has_child('X') is True  # Node 'X' is its new child
         # Verify new node 'X'
@@ -138,7 +146,8 @@ class PrefixTreeTest(unittest.TestCase):
         node_Z = node_Y.get_child('Z')
         assert node_Z.character == 'Z'
         assert node_Z.is_terminal() is True
-        assert node_Z.num_children() == 0
+        assert node_Z.num_children() == 1
+        assert node_Z.children[0].character == '$'
 
     def test_size_and_is_empty(self):
         tree = PrefixTree()

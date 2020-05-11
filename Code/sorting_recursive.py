@@ -78,8 +78,9 @@ def partition(items, low, high):
         while i < high and items[i] <= items[low]:
             i += 1
 
-        while j > low and items[j] > items[low]:
+        while items[j] > items[low]:
             j -= 1
+            print(j)
 
         if j <= i:
             break

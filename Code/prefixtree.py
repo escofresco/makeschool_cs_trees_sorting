@@ -144,7 +144,12 @@ class PrefixTree:
         """Traverse this prefix tree with recursive depth-first traversal.
         Start at the given node with the given prefix representing its path in
         this prefix tree and visit each node with the given visit function."""
-        pass
+
+        if child:
+            for child in node.children:
+                visit(child)
+                self._traverse(child, prefix+child.character, visit)
+
 
 
 def create_prefix_tree(strings):

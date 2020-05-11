@@ -74,15 +74,15 @@ def partition(items, low, high):
 
     while True:
 
-        while i < high+1 and items[i] <= items[low]:
+        while i < high and items[i] <= items[low]:
             i += 1
 
         while j > low and items[j] > items[low]:
             j -= 1
 
-        if j < i:
+        if j <= i:
             break
-        print(items, i, j)
+        print(i, j)
         items[i], items[j] = items[j], items[i]
     items[low], items[j] = items[j], items[low]
     return j
@@ -99,7 +99,7 @@ def quick_sort(items, low=None, high=None):
 
     if None in (low, high):
         #items[:] = list(set(items))
-        #shuffle(items) # Make sure that pivots are placed randomly
+        shuffle(items) # Make sure that pivots are placed randomly
         low = 0
         high = len(items) - 1
 

@@ -156,6 +156,56 @@ class BinaryMinHeap(object):
         return (index << 1) + 2  # Shift left to multiply by 2
 
 
+def heap_sort(items):
+    """Convert items to max heap in-place with max_heapify by only recursing
+    on the left half since the right half of items consists of leaves. Then
+    continuously move the next max to the end.
+    Time: O(nlg n)
+    Space: O(1) since call stack is bound to the next max_heapify call.
+    """
+    def max_heapify(i, hi):
+        left_child_index = (i << 1) + 1
+        right_child_index = left_child_index + 1
+
+        ## Set largest to the largest item between i and left child
+        if (left_child_index < hi and
+            items[left_child_index] > items[i]):
+            largest = left_child_index
+        else:
+            largest = i
+
+        if (right_child_index < hi and
+            items[right_child_index] > items[largest]):
+            ## Update largest with right child if right child is larger
+            largest = right_child_index
+
+        if largest != i:
+            ## Largest is one of the children
+            # Put i in correct spot
+            items[i], items[largest] = items[largest], items[i]
+            max_heapify(largest, hi)
+
+    def build_max_heap():
+        ## Time: O(n)
+        for i in range(len(items)//2-1, -1, -1):
+            ## Since the right half consists of the leaves of heap,
+            ## max_heapify only needs to be called on left half.
+            max_heapify(i, len(items))
+    build_max_heap()
+
+    ## Time:    O(nlg n) since n-1 calls are made to max_heapify, which each
+    ##          take O(lg n).
+    hi = len(items)
+    for i in range(len(items)-1, 0, -1):
+        ## Continuously put next max from the root (index 0) to last index
+        items[0], items[i] = items[i], items[0]
+
+        # Partition heap into imcomplete subarray of size [0, i] and
+        # complete heap of size (i, items.length]
+        max_heapify(0, i)
+
+
+
 def test_binary_min_heap():
     # Create a binary min heap of 7 items
     items = [9, 25, 86, 3, 29, 5, 55]

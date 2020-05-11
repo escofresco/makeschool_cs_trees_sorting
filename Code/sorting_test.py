@@ -3,7 +3,8 @@
 from sorting import random_ints
 from sorting_iterative import (is_sorted, bubble_sort, selection_sort,
                                insertion_sort, bottom_up_merge_sort)
-from sorting_recursive import split_sort_merge, merge_sort, quick_sort
+from sorting_recursive import (split_sort_merge, merge_sort, quick_sort, merge,
+                               partition)
 from sorting_integer import counting_sort, bucket_sort
 import unittest
 from random import randint
@@ -202,6 +203,41 @@ class StringSortTest(unittest.TestCase):
         sorted_items = sorted(items)  # Copy
         sort(items)  # Mutate
         assert items == sorted_items
+
+class MergeTest(unittest.TestCase):
+
+    def test_edges(self):
+        assert merge([], []) == []
+        items = list(range(100))
+        assert merge(items, []) == items
+        assert merge([], items) == items
+        assert merge(items, items) == sorted(items+items)
+
+    def test_normal(self):
+        items1 = list(range(100))
+        items2 = [-i for i in range(100, -1, -1)]
+        assert merge(items1, items2) == items2 + items1
+
+        items1 = sorted([randint(0,1000) for _ in range(1000)])
+        items2 = sorted([randint(0,1000) for _ in range(1000)])
+        assert merge(items1, items2) == sorted(items1 + items2)
+
+class PartitionTest(unittest.TestCase):
+
+    def test_edges(self):
+        assert partition([1], 0, 0) == 0
+        assert partition([1]*1000, 0, 999) == 999
+        assert partition([1]*1000, 0, 666) == 666
+        assert partition(list(range(100)), 0, 0) == 0
+        assert partition([2,1], 0, 1) == 1
+        assert partition([3,1,2], 0, 2) == 2
+        assert partition([2,1,3], 0, 2) == 1
+
+    def test_normal(self):
+        assert partition([15, 18, 7, 90, 5, 5], 0, 5) == 3
+        assert partition([15, 18, 17, 13, 14], 0, 4) == 2
+        assert partition([15, 16, 17, 18, 19, 20], 0, 5) == 0
+        assert partition([20, 19, 18, 17, 16, 15], 0, 5) == 5
 
 
 def get_sort_function():

@@ -22,8 +22,9 @@ class PrefixTreeNode:
         self.terminal = self.character == '$'
 
     def is_terminal(self):
-        """Return True if this prefix tree node terminates a string."""
-        return self.character == '$' # Dollar sign indicates end-of-string
+        """Return True if this prefix tree node is the last character in string."""
+        return (self.num_children() == 1 and
+                self.children[0].character == '$') # Dollar sign indicates end-of-string
 
     def num_children(self):
         """Return the number of children nodes this prefix tree node has."""

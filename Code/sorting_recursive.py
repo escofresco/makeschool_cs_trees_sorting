@@ -7,7 +7,8 @@ def merge(items1, items2):
     """Merge given lists of items, each assumed to already be in sorted order,
     and return a new list containing all items in sorted order.
     Running time:
-    TODO: Memory usage: ??? Why and under what conditions?"""
+    Memory usage:   theta(n + m) since auxiliary array is always made to contain
+                    the combination of both lists."""
     assert is_sorted(items1)
     assert is_sorted(items2)
     aux = []

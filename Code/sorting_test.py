@@ -1,13 +1,16 @@
 #!python
 
+import unittest
+from random import randint
+
+from binaryheap import heap_sort
 from sorting import random_ints
 from sorting_iterative import (is_sorted, bubble_sort, selection_sort,
                                insertion_sort, bottom_up_merge_sort)
 from sorting_recursive import (split_sort_merge, merge_sort, quick_sort, merge,
                                partition)
 from sorting_integer import counting_sort, bucket_sort
-import unittest
-from random import randint
+
 
 
 class IsSortedTest(unittest.TestCase):
@@ -269,7 +272,7 @@ def get_sort_function():
 
 
 # If using PyTest, change this variable to the sort function you want to test
-sort = quick_sort
+sort = heap_sort
 
 
 if __name__ == '__main__':

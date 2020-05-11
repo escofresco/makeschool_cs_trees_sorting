@@ -39,11 +39,16 @@ class PrefixTree:
         return f'PrefixTree({self.strings()!r})'
 
     def is_empty(self):
-        """Return True if this prefix tree is empty (contains no strings)."""
+        """Return True if this prefix tree is empty (contains no strings).
+        Time: Θ(1) | Space: Θ(1)
+        """
         return self.root.num_children() == 1
 
     def contains(self, string):
-        """Return True if this prefix tree contains the given string."""
+        """Return True if this prefix tree contains the given string.
+        Time: O(kn) n = # of strings (width of tree), k = len(string)
+        Space: Θ(1)
+        """
         cur_node = self.root
 
         for char in string+'$':
@@ -56,7 +61,10 @@ class PrefixTree:
 
 
     def insert(self, string):
-        """Insert the given string into this prefix tree."""
+        """Insert the given string into this prefix tree.
+        Time: O(kn) n = # of strings (width of tree), k = len(string)
+        Space: Θ(1)
+        """
 
         cur_node = self.root
 
@@ -85,7 +93,10 @@ class PrefixTree:
         """Return a pair containing the deepest node in this prefix tree that
         matches the longest prefix of the given string and the node's depth.
         The depth returned is equal to the number of prefix characters matched.
-        Search is done iteratively with a loop starting from the root node."""
+        Search is done iteratively with a loop starting from the root node.
+        Time: O(kn) n = # of strings (width of tree), k = len(string)
+        Space: Θ(1)
+        """
         # Start with the root node
         node = self.root
         depth = 0
@@ -102,7 +113,8 @@ class PrefixTree:
 
     def complete(self, prefix):
         """Return a list of all strings stored in this prefix tree that start
-        with the given prefix string."""
+        with the given prefix string.
+        Time: O(n) | Space: O(n)"""
         # Create a list of completions in prefix tree
         completions = []
         ## BFS Search for all completions (maintain relative order of nodes)
@@ -125,7 +137,8 @@ class PrefixTree:
         return completions
 
     def strings(self):
-        """Return a list of all strings stored in this prefix tree."""
+        """Return a list of all strings stored in this prefix tree.
+        Time: Θ(n) | Space: O(n)"""
         # Create a list of all strings in prefix tree
         all_strings = []
         q = deque([('', self.root)])
@@ -143,13 +156,13 @@ class PrefixTree:
     def _traverse(self, node, prefix, visit):
         """Traverse this prefix tree with recursive depth-first traversal.
         Start at the given node with the given prefix representing its path in
-        this prefix tree and visit each node with the given visit function."""
+        this prefix tree and visit each node with the given visit function.
+        Time: Θ(n) | Space: O(lg n)"""
 
         if child:
             for child in node.children:
                 visit(child)
                 self._traverse(child, prefix+child.character, visit)
-
 
 
 def create_prefix_tree(strings):
